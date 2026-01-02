@@ -49,7 +49,8 @@ namespace NExtract
   UInt32 Read_LimitGB();
 
   void Save_PasswordHistory(const UString &password);
-  void Load_PasswordHistory(UStringVector &passwords);
+void Load_PasswordHistory(UStringVector &passwords);
+void Delete_PasswordHistory(const UString &password);
 }
 
 namespace NCompression

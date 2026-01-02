@@ -1,0 +1,2 @@
+native tool
+C:\Users\19256\Documents\project\7z2501\CPP\7zip\UI\GUI>nmake -f makefile PLATFORM=x64

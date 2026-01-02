@@ -247,6 +247,37 @@ void Load_PasswordHistory(UStringVector &passwords)
   key.GetValue_Strings(kPasswordHistory, passwords);
 }
 
+void Delete_PasswordHistory(const UString &password)
+{
+  if (password.IsEmpty())
+    return;
+
+  CS_LOCK
+  CKey key;
+  if (OpenMainKey(key, kKeyName) != ERROR_SUCCESS)
+    return;
+
+  UStringVector passwords;
+  key.GetValue_Strings(kPasswordHistory, passwords);
+
+  bool changed = false;
+  for (unsigned i = 0; i < passwords.Size(); i++)
+  {
+    if (passwords[i] == password)
+    {
+      passwords.Delete(i);
+      changed = true;
+      break; // Assuming unique passwords as per AddUniquePassword
+    }
+  }
+
+  if (changed)
+  {
+    key.RecurseDeleteKey(kPasswordHistory);
+    key.SetValue_Strings(kPasswordHistory, passwords);
+  }
+}
+
 }
 
 namespace NCompression

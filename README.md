@@ -1,4 +1,4 @@
-# 7-Zip修改版
+# 我的7-Zip修改版
 
 **本项目是基于官方7-Zip(2501)的修改版本**
 
@@ -23,6 +23,7 @@
 
 - 自动保存最近使用的密码（最多保存16个）
 - 在密码输入对话框中以下拉列表形式显示历史密码
+- 支持点击每条历史记录右侧的 "x" 按钮删除该条记录
 - 支持密码去重，避免重复记录
 - 密码数据存储在Windows注册表中
 - 保留原有的"显示密码"功能
@@ -42,24 +43,27 @@
 
 1. **CPP/7zip/UI/Common/ZipRegistry.h**
    - 添加了密码历史相关的数据结构定义
-   - 添加了 `Save_PasswordHistory` 和 `Load_PasswordHistory` 函数声明
+   - 添加了 `Save_PasswordHistory`、`Load_PasswordHistory` 和 `Delete_PasswordHistory` 函数声明
 
 2. **CPP/7zip/UI/Common/ZipRegistry.cpp**
-   - 实现了密码历史的保存和加载功能
+   - 实现了密码历史的保存、加载和删除功能
    - 密码历史存储在注册表的 `Software\7-Zip\Extraction\PasswordHistory` 路径下
    - 实现了密码去重和数量限制（最多16个）
 
 3. **CPP/7zip/UI/FileManager/PasswordDialog.rc**
    - 将密码输入框从单行编辑控件改为下拉列表控件（ComboBox）
+   - 启用了所有者绘制（Owner-Draw）以支持自定义项渲染
    - 调整了对话框布局以适应新的控件
 
 4. **CPP/7zip/UI/FileManager/PasswordDialog.h**
    - 将密码编辑控件替换为下拉列表控件
-   - 移除了不必要的编辑控件成员变量
+   - 添加了所有者绘制和列表框子类化的相关成员变量和方法声明
 
 5. **CPP/7zip/UI/FileManager/PasswordDialog.cpp**
    - 在对话框初始化时加载密码历史记录
    - 在用户点击确定时保存新输入的密码
+   - 实现了所有者绘制逻辑，在每个历史项右侧绘制 "x" 按钮
+   - 实现了列表框子类化逻辑，捕获点击 "x" 按钮的事件并删除相应的历史记录
    - 实现了密码显示/隐藏功能与下拉列表控件的集成
 
 ### 技术实现细节
@@ -67,7 +71,7 @@
 - 使用 Windows 注册表存储密码历史数据
 - 采用与路径历史相同的存储模式
 - 密码历史记录按时间顺序排列，最新的密码排在最前面
-- 实现了密码去重逻辑，避免重复记录相同的密码
+- 实现了密码去重 logic，避免重复记录相同的密码
 - 限制历史记录数量为16个，超出时删除最旧的记录
 
 ## 编译说明
